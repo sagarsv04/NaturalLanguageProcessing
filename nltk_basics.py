@@ -2,7 +2,18 @@ import nltk
 from nltk.stem import PorterStemmer
 from nltk.corpus import stopwords, state_union
 from nltk.tokenize import sent_tokenize, word_tokenize, PunktSentenceTokenizer
+from nltk.stem import WordNetLemmatizer
+from nltk.corpus import wordnet
 
+
+################################ Helper Function ################################
+
+def get_data():
+	train_text = state_union.raw("2005-GWBush.txt")
+	sample_text = state_union.raw("2006-GWBush.txt")
+	custom_sent_tokenizer = PunktSentenceTokenizer(train_text)
+	tokenized = custom_sent_tokenizer.tokenize(sample_text)
+	return train_text, sample_text, custom_sent_tokenizer, tokenized
 
 
 ################################ Tokenize ################################
@@ -28,12 +39,9 @@ stemmed = [ps.stem(w) for w in words]
 
 ################################ Part of Speech Tagging ################################
 
-train_text = state_union.raw("2005-GWBush.txt")
-sample_text = state_union.raw("2006-GWBush.txt")
-custom_sent_tokenizer = PunktSentenceTokenizer(train_text)
-tokenized = custom_sent_tokenizer.tokenize(sample_text)
 
 def process_content():
+	train_text, sample_text, custom_sent_tokenizer, tokenized = get_data()
 	try:
 		for i in tokenized[:5]:
 			words = word_tokenize(i)
@@ -55,12 +63,8 @@ output = parser.parse(sentence)
 output.draw()
 
 
-train_text = state_union.raw("2005-GWBush.txt")
-sample_text = state_union.raw("2006-GWBush.txt")
-custom_sent_tokenizer = PunktSentenceTokenizer(train_text)
-tokenized = custom_sent_tokenizer.tokenize(sample_text)
-
 def process_content():
+	train_text, sample_text, custom_sent_tokenizer, tokenized = get_data()
 	try:
 		for i in tokenized[:5]:
 			words = word_tokenize(i)
@@ -78,18 +82,15 @@ process_content()
 
 ################################ Chinking ################################
 
-train_text = state_union.raw("2005-GWBush.txt")
-sample_text = state_union.raw("2006-GWBush.txt")
-custom_sent_tokenizer = PunktSentenceTokenizer(train_text)
-tokenized = custom_sent_tokenizer.tokenize(sample_text)
 
 def process_content():
+	train_text, sample_text, custom_sent_tokenizer, tokenized = get_data()
 	try:
 		for i in tokenized[:5]:
 			words = word_tokenize(i)
 			tagged = nltk.pos_tag(words)
 			chinkGram = r"""Chunk: {<.*>+}
-                                    }<VB.?|IN|DT|TO>+{"""
+									}<VB.?|IN|DT|TO>+{"""
 			chinkParser = nltk.RegexpParser(chinkGram)
 			chinked = chinkParser.parse(tagged)
 			chinked.draw()
@@ -98,3 +99,62 @@ def process_content():
 		print(str(e))
 
 process_content()
+
+
+################################ Named Entity Recognition ################################
+
+
+def process_content():
+	train_text, sample_text, custom_sent_tokenizer, tokenized = get_data()
+	try:
+		for i in tokenized[:5]:
+			words = word_tokenize(i)
+			tagged = nltk.pos_tag(words)
+			namedEnt = nltk.ne_chunk(tagged, binary=True)
+			namedEnt.draw()
+	except Exception as e:
+		print(str(e))
+
+process_content()
+
+
+################################ Lemmatizing ################################
+
+
+lemmatizer = WordNetLemmatizer()
+
+print(lemmatizer.lemmatize("cats"))
+print(lemmatizer.lemmatize("cacti"))
+print(lemmatizer.lemmatize("geese"))
+print(lemmatizer.lemmatize("rocks"))
+print(lemmatizer.lemmatize("python"))
+print(lemmatizer.lemmatize("better", pos="a"))
+print(lemmatizer.lemmatize("best", pos="a"))
+print(lemmatizer.lemmatize("run"))
+print(lemmatizer.lemmatize("ran",'v'))
+
+
+################################ WordNet ################################
+
+
+syns = wordnet.synsets("program")
+print(syns[0].name())
+print(syns[0].lemmas()[0].name())
+print(syns[0].definition())
+print(syns[0].examples())
+
+synonyms = []
+antonyms = []
+
+for syn in wordnet.synsets("good"):
+    for l in syn.lemmas():
+        synonyms.append(l.name())
+        if l.antonyms():
+            antonyms.append(l.antonyms()[0].name())
+
+print(set(synonyms))
+print(set(antonyms))
+
+w1 = wordnet.synset('ship.n.01')
+w2 = wordnet.synset('boat.n.01')
+print(w1.wup_similarity(w2))
