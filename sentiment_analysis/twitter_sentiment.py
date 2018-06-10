@@ -8,7 +8,7 @@ import text_classification as txt_clf
 
 # read credentials from ini file
 config = configparser.ConfigParser()
-config.read('./credentials.ini')
+config.read('../credentials.ini')
 
 
 # Authenticate

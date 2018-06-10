@@ -19,22 +19,6 @@ java_path = "C:/Program Files/Java/jdk1.8.0_172/bin/java.exe"
 os.environ['JAVAHOME'] = java_path
 
 
-####################### Basic Example using Stanford NER Tagger #######################
-
-
-# using 3 class model for recognizing locations, persons, and organizations
-st = StanfordNERTagger('./stanford_ner/classifiers/english.all.3class.distsim.crf.ser.gz',
-					   './stanford_ner/stanford-ner.jar', encoding='utf-8')
-
-
-text = 'While in France, Christine Lagarde discussed short-term stimulus efforts in a recent interview with the Wall Street Journal.'
-
-tokenized_text = word_tokenize(text)
-classified_text = st.tag(tokenized_text)
-
-print(classified_text)
-
-
 ####################### Testing NLTK and Stanford NER Taggers for Accuracy #######################
 
 
@@ -101,8 +85,8 @@ def test_nltk_classifier():
 
 def test_stanford_classifier():
 
-	st = StanfordNERTagger('./stanford_ner/classifiers/english.all.3class.distsim.crf.ser.gz',
-							'./stanford_ner/stanford-ner.jar', encoding='utf-8')
+	st = StanfordNERTagger('../stanford_ner/classifiers/english.all.3class.distsim.crf.ser.gz',
+							'../stanford_ner/stanford-ner.jar', encoding='utf-8')
 	stanford_prediction = st.tag(pure_tokens)
 	stanford_accuracy = accuracy(reference_annotations, stanford_prediction)
 	print(stanford_accuracy)
