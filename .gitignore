@@ -1,1 +1,4 @@
 *.pickle
+*.ini
+__pycache__
+*out.txt
